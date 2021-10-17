@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+ 
+namespace Guild
+{
+    public class Guild
+    {
+        private readonly List<Player> roster;
+        public List<Player> Roster { get; set; }
+        public string Name { get; set; }
+        public int Capacity { get; set; }
+        public int Count => roster.Count;
+        public Guild(string name, int capacity)
+        {
+            this.Name = name;
+            this.Capacity = capacity;
+            roster = new List<Player>();
+        }
+ 
+        public void AddPlayer(Player player)
+        {
+            if (roster.Count < Capacity)
+            {
+                roster.Add(player);
+            }
+        }
+ 
+        public bool RemovePlayer(string name)
+        {
+            bool playerExists = roster.Exists(x => x.Name == name);
+            if (playerExists)
+            {
+                roster.Remove(roster.First(x => x.Name == name));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+ 
+        public void PromotePlayer(string name)
+        {
+            var player = roster.First(x => x.Name == name);
+            if (player.Rank != "Member")
+            {
+                player.Rank = "Member";
+            }
+        }
+ 
+        public void DemotePlayer(string name)
+        {
+            var player = roster.First(x => x.Name == name);
+            if (player.Rank != "Trial")
+            {
+                player.Rank = "Trial";
+            }
+        }
+ 
+        public Player[] KickPlayersByClass(string className)
+        {
+            Player[] listPlayers = roster.Where(x => x.Class == className).ToArray();
+            roster.RemoveAll(x => x.Class == className);
+            return listPlayers;
+        }
+ 
+        public string Report()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Players in the guild: {this.Name}");
+            foreach (Player player in roster)
+            {
+                sb.AppendLine(player.ToString());
+            }
+            return sb.ToString().TrimEnd();
+        }
+    }
+}
+ 
+ 
+using System;
+using System.Collections.Generic;
+using System.Text;
+ 
+namespace Guild
+{
+    public class Player
+    {
+        public string Name { get; set; }
+        public string Class { get; set; }
+        public string Rank { get; set; } = "Trial";
+        public string Description { get; set; } = "n/a";
+ 
+        public Player(string name, string className)
+        {
+            this.Name = name;
+            this.Class = className;
+        }
+ 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Player {Name}: {Class}");
+            sb.AppendLine($"Rank: { Rank}");
+            sb.AppendLine($"Description: { Description}");
+            return sb.ToString().TrimEnd();
+        }
+    }
+}
+ 
